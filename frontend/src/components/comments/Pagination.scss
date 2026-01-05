@@ -1,0 +1,63 @@
+@import '../../styles/index.scss';
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .pagination-btn {
+    padding: 8px 16px;
+    border: 2px solid $border-color;
+    background-color: white;
+    color: $text-color;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled):not(.dots) {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: white;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: white;
+    }
+
+    &.dots {
+      border: none;
+      cursor: default;
+      color: $text-light;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  @media (max-width: $mobile) {
+    gap: 4px;
+    padding: 15px;
+
+    .pagination-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+  }
+}
+
