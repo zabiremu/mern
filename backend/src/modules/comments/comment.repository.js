@@ -1,7 +1,6 @@
 import Comment from './comment.model.js';
 
-class CommentRepository {
-  async findAll(options = {}) {
+export const findAll = async (options = {}) => {
     const {
       page = 1,
       limit = 10,
@@ -67,78 +66,76 @@ class CommentRepository {
     const total = await Comment.countDocuments(filter);
 
     return { comments, total };
-  }
+};
 
-  async findById(id) {
-    return await Comment.findById(id).populate('author', '-password');
-  }
+export const findById = async (id) => {
+  return await Comment.findById(id).populate('author', '-password');
+};
 
-  async create(commentData) {
-    const comment = await Comment.create(commentData);
-    return await comment.populate('author', '-password');
-  }
+export const create = async (commentData) => {
+  const comment = await Comment.create(commentData);
+  return await comment.populate('author', '-password');
+};
 
-  async update(id, updateData) {
-    const comment = await Comment.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    }).populate('author', '-password');
+export const update = async (id, updateData) => {
+  const comment = await Comment.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  }).populate('author', '-password');
 
-    return comment;
-  }
+  return comment;
+};
 
-  async delete(id) {
-    return await Comment.findByIdAndDelete(id);
-  }
+export { deleteComment as delete };
+const deleteComment = async (id) => {
+  return await Comment.findByIdAndDelete(id);
+};
 
-  async addLike(commentId, userId) {
-    return await Comment.findByIdAndUpdate(
-      commentId,
-      {
-        $addToSet: { likes: userId },
-        $pull: { dislikes: userId },
-      },
-      { new: true }
-    ).populate('author', '-password');
-  }
+export const addLike = async (commentId, userId) => {
+  return await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      $addToSet: { likes: userId },
+      $pull: { dislikes: userId },
+    },
+    { new: true }
+  ).populate('author', '-password');
+};
 
-  async removeLike(commentId, userId) {
-    return await Comment.findByIdAndUpdate(
-      commentId,
-      {
-        $pull: { likes: userId },
-      },
-      { new: true }
-    ).populate('author', '-password');
-  }
+export const removeLike = async (commentId, userId) => {
+  return await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      $pull: { likes: userId },
+    },
+    { new: true }
+  ).populate('author', '-password');
+};
 
-  async addDislike(commentId, userId) {
-    return await Comment.findByIdAndUpdate(
-      commentId,
-      {
-        $addToSet: { dislikes: userId },
-        $pull: { likes: userId },
-      },
-      { new: true }
-    ).populate('author', '-password');
-  }
+export const addDislike = async (commentId, userId) => {
+  return await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      $addToSet: { dislikes: userId },
+      $pull: { likes: userId },
+    },
+    { new: true }
+  ).populate('author', '-password');
+};
 
-  async removeDislike(commentId, userId) {
-    return await Comment.findByIdAndUpdate(
-      commentId,
-      {
-        $pull: { dislikes: userId },
-      },
-      { new: true }
-    ).populate('author', '-password');
-  }
+export const removeDislike = async (commentId, userId) => {
+  return await Comment.findByIdAndUpdate(
+    commentId,
+    {
+      $pull: { dislikes: userId },
+    },
+    { new: true }
+  ).populate('author', '-password');
+};
 
-  async getReplies(parentCommentId) {
-    return await Comment.find({ parentComment: parentCommentId })
-      .populate('author', '-password')
-      .sort({ createdAt: -1 });
-  }
-}
-
-export default new CommentRepository();
+export const getReplies = async (parentCommentId) => {
+  return await Comment.find({ parentComment: parentCommentId })
+    .populate('author', '-password')
+    .sort({ createdAt: -1 });
+};
 

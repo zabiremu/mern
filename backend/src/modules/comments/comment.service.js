@@ -1,130 +1,126 @@
-import commentRepository from './comment.repository.js';
+import * as commentRepository from './comment.repository.js';
 import { AppError } from '../../utils/errorHandler.js';
 
-class CommentService {
-  async getAllComments(options) {
-    const { comments, total } = await commentRepository.findAll(options);
+export const getAllComments = async (options) => {
+  const { comments, total } = await commentRepository.findAll(options);
 
-    const page = parseInt(options.page) || 1;
-    const limit = parseInt(options.limit) || 10;
-    const totalPages = Math.ceil(total / limit);
+  const page = parseInt(options.page) || 1;
+  const limit = parseInt(options.limit) || 10;
+  const totalPages = Math.ceil(total / limit);
 
-    return {
-      comments,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1,
-      },
-    };
+  return {
+    comments,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
+};
+
+export const getCommentById = async (id) => {
+  const comment = await commentRepository.findById(id);
+
+  if (!comment) {
+    throw new AppError('Comment not found', 404);
   }
 
-  async getCommentById(id) {
-    const comment = await commentRepository.findById(id);
+  return comment;
+};
 
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
+export const createComment = async (commentData, userId) => {
+  const comment = await commentRepository.create({
+    ...commentData,
+    author: userId,
+  });
 
-    return comment;
+  return comment;
+};
+
+export const updateComment = async (id, updateData, userId) => {
+  const comment = await commentRepository.findById(id);
+
+  if (!comment) {
+    throw new AppError('Comment not found', 404);
   }
 
-  async createComment(commentData, userId) {
-    const comment = await commentRepository.create({
-      ...commentData,
-      author: userId,
-    });
-
-    return comment;
+  if (comment.author._id.toString() !== userId.toString()) {
+    throw new AppError('You are not authorized to update this comment', 403);
   }
 
-  async updateComment(id, updateData, userId) {
-    const comment = await commentRepository.findById(id);
+  const updatedComment = await commentRepository.update(id, updateData);
+  return updatedComment;
+};
 
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
+export const deleteComment = async (id, userId) => {
+  const comment = await commentRepository.findById(id);
 
-    if (comment.author._id.toString() !== userId.toString()) {
-      throw new AppError('You are not authorized to update this comment', 403);
-    }
-
-    const updatedComment = await commentRepository.update(id, updateData);
-    return updatedComment;
+  if (!comment) {
+    throw new AppError('Comment not found', 404);
   }
 
-  async deleteComment(id, userId) {
-    const comment = await commentRepository.findById(id);
-
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
-
-    if (comment.author._id.toString() !== userId.toString()) {
-      throw new AppError('You are not authorized to delete this comment', 403);
-    }
-
-    await commentRepository.delete(id);
-    return { message: 'Comment deleted successfully' };
+  if (comment.author._id.toString() !== userId.toString()) {
+    throw new AppError('You are not authorized to delete this comment', 403);
   }
 
-  async likeComment(commentId, userId) {
-    const comment = await commentRepository.findById(commentId);
+  await commentRepository.delete(id);
+  return { message: 'Comment deleted successfully' };
+};
 
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
+export const likeComment = async (commentId, userId) => {
+  const comment = await commentRepository.findById(commentId);
 
-    // toggle like - if already liked, remove it
-    const hasLiked = comment.likes.some(
-      (id) => id.toString() === userId.toString()
-    );
-
-    let updatedComment;
-    if (hasLiked) {
-      updatedComment = await commentRepository.removeLike(commentId, userId);
-    } else {
-      updatedComment = await commentRepository.addLike(commentId, userId);
-    }
-
-    return updatedComment;
+  if (!comment) {
+    throw new AppError('Comment not found', 404);
   }
 
-  async dislikeComment(commentId, userId) {
-    const comment = await commentRepository.findById(commentId);
+  // toggle like - if already liked, remove it
+  const hasLiked = comment.likes.some(
+    (id) => id.toString() === userId.toString()
+  );
 
-    if (!comment) {
-      throw new AppError('Comment not found', 404);
-    }
-
-    const hasDisliked = comment.dislikes.some(
-      (id) => id.toString() === userId.toString()
-    );
-
-    let updatedComment;
-    if (hasDisliked) {
-      updatedComment = await commentRepository.removeDislike(commentId, userId);
-    } else {
-      updatedComment = await commentRepository.addDislike(commentId, userId);
-    }
-
-    return updatedComment;
+  let updatedComment;
+  if (hasLiked) {
+    updatedComment = await commentRepository.removeLike(commentId, userId);
+  } else {
+    updatedComment = await commentRepository.addLike(commentId, userId);
   }
 
-  async getReplies(parentCommentId) {
-    const parentComment = await commentRepository.findById(parentCommentId);
+  return updatedComment;
+};
 
-    if (!parentComment) {
-      throw new AppError('Parent comment not found', 404);
-    }
+export const dislikeComment = async (commentId, userId) => {
+  const comment = await commentRepository.findById(commentId);
 
-    const replies = await commentRepository.getReplies(parentCommentId);
-    return replies;
+  if (!comment) {
+    throw new AppError('Comment not found', 404);
   }
-}
 
-export default new CommentService();
+  const hasDisliked = comment.dislikes.some(
+    (id) => id.toString() === userId.toString()
+  );
+
+  let updatedComment;
+  if (hasDisliked) {
+    updatedComment = await commentRepository.removeDislike(commentId, userId);
+  } else {
+    updatedComment = await commentRepository.addDislike(commentId, userId);
+  }
+
+  return updatedComment;
+};
+
+export const getReplies = async (parentCommentId) => {
+  const parentComment = await commentRepository.findById(parentCommentId);
+
+  if (!parentComment) {
+    throw new AppError('Parent comment not found', 404);
+  }
+
+  const replies = await commentRepository.getReplies(parentCommentId);
+  return replies;
+};
 
