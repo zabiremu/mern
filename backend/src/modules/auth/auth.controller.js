@@ -1,4 +1,4 @@
-import authService from './auth.service.js';
+import * as authService from './auth.service.js';
 import { sendTokenResponse } from '../../utils/jwt.js';
 import { AppError } from '../../utils/errorHandler.js';
 
