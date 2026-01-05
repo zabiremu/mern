@@ -20,7 +20,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          💬 Comment System
+          Comment System
         </Link>
 
         <div className="navbar-menu">

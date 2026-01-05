@@ -17,12 +17,17 @@ export const register = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authService.register(userData);
+
+
       toast.success('Registration successful!');
       return response;
+
+
     } catch (error) {
       const message =
         error.response?.data?.message || 'Registration failed';
       toast.error(message);
+
       return rejectWithValue(message);
     }
   }
@@ -33,12 +38,17 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
+
       toast.success('Login successful!');
       return response;
+
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
+
       toast.error(message);
+
       return rejectWithValue(message);
+
     }
   }
 );
@@ -124,5 +134,6 @@ const authSlice = createSlice({
 });
 
 export const { clearError } = authSlice.actions;
+
 export default authSlice.reducer;
 
