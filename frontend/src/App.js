@@ -13,12 +13,14 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, token } = useSelector((state) => state.auth);
 
+  // load user data on mount if we have a token
   useEffect(() => {
     if (token) {
       dispatch(loadUser());
     }
   }, [dispatch, token]);
 
+  // setup socket connection when authenticated
   useEffect(() => {
     if (isAuthenticated && token) {
       initializeSocket(token);

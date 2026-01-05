@@ -4,6 +4,7 @@ import './Pagination.scss';
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pages = [];
 
+  // build page numbers array with ellipsis
   for (let i = 1; i <= totalPages; i++) {
     if (
       i === 1 ||

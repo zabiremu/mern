@@ -17,13 +17,12 @@ const CommentCard = ({ comment }) => {
 
   const isAuthor = user?._id === comment.author._id;
 
+  // check reaction status
   const hasLiked = comment.likes?.includes(user?._id);
   const hasDisliked = comment.dislikes?.includes(user?._id);
 
   const handleLike = () => {
-    if (!isAuthenticated) {
-      return;
-    }
+    if (!isAuthenticated) return;
     dispatch(likeComment(comment._id));
   };
 
@@ -41,9 +40,8 @@ const CommentCard = ({ comment }) => {
   };
 
   const handleUpdate = () => {
-    if (editText.trim() === '') {
-      return;
-    }
+    if (editText.trim() === '') return;
+    
     dispatch(updateComment({ id: comment._id, commentData: { text: editText } }));
     setIsEditing(false);
   };

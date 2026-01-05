@@ -22,7 +22,8 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    // redirect to home on success
     const result = await dispatch(login({ email, password }));
     if (result.type === 'auth/login/fulfilled') {
       navigate('/');

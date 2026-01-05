@@ -25,6 +25,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // validate passwords match
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;

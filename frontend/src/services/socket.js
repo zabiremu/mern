@@ -11,6 +11,7 @@ const SOCKET_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http:/
 let socket = null;
 
 export const initializeSocket = (token) => {
+  // prevent multiple connections
   if (socket) {
     return socket;
   }

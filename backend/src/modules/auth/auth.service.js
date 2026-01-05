@@ -5,11 +5,13 @@ class AuthService {
   async register(userData) {
     const { username, email, password } = userData;
 
+    // check if user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
 
     if (existingUser) {
+      // more specific error messages
       if (existingUser.email === email) {
         throw new AppError('Email already registered', 400);
       }

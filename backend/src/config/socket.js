@@ -38,7 +38,8 @@ const initializeSocket = (server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log(`✅ User connected: ${socket.id} (${socket.username || 'Guest'})`);
+    const username = socket.username || 'Guest';
+    console.log(`✅ User connected: ${socket.id} (${username})`);
 
     socket.on('join:comments', () => {
       socket.join('comments');

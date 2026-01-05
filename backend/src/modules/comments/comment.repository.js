@@ -12,6 +12,7 @@ class CommentRepository {
 
     const skip = (page - 1) * limit;
 
+    // handle different sort options
     let sortObj = {};
     if (sortBy === 'likes') {
       sortObj = { likeCount: order === 'desc' ? -1 : 1 };
@@ -23,6 +24,7 @@ class CommentRepository {
 
     const filter = { parentComment };
 
+    // use aggregation for like/dislike sorting
     if (sortBy === 'likes' || sortBy === 'dislikes') {
       const comments = await Comment.aggregate([
         { $match: filter },

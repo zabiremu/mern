@@ -78,6 +78,7 @@ class CommentService {
       throw new AppError('Comment not found', 404);
     }
 
+    // toggle like - if already liked, remove it
     const hasLiked = comment.likes.some(
       (id) => id.toString() === userId.toString()
     );

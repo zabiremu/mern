@@ -119,6 +119,7 @@ const commentSlice = createSlice({
       state.error = null;
     },
     addCommentRealtime: (state, action) => {
+      // avoid duplicates
       const exists = state.comments.find((c) => c._id === action.payload._id);
       if (!exists) {
         state.comments.unshift(action.payload);
